@@ -1,38 +1,39 @@
 package ru.netology.manager;
 
 import ru.netology.domain.AfishaItem;
+import ru.netology.repository.AfishaRepository;
 
 public class AfishaManager {
-  private AfishaItem[] items = new AfishaItem[0];
-  private int itemMovie = 10;
+    private AfishaRepository repository;
+    private int itemMovie = 10;
 
-  public AfishaManager(int itemMovie) {
-    if (itemMovie >= 0) {
-      this.itemMovie = itemMovie;
+    public AfishaManager(AfishaRepository repository) {
+        this.repository = repository;
     }
-  }
 
-  public AfishaItem[] getLast() {
-    int count = items.length > itemMovie ? itemMovie : items.length;
-    AfishaItem[] result = new AfishaItem[count];
-    for (int i = 0; i < count; i++) {
-      int index = items.length - i - 1;
-      result[i] = items[index];
+    public AfishaManager(AfishaRepository repository, int itemMovie) {
+        this.repository = repository;
+        if (itemMovie >= 0) {
+            this.itemMovie = itemMovie;
+        }
     }
-    return result;
-  }
 
-  public AfishaItem[] getAll() {
+    public AfishaItem[] getLast() {
+        AfishaItem[] items = repository.findAll();
+        int count = items.length > itemMovie ? itemMovie : items.length;
+        AfishaItem[] result = new AfishaItem[count];
+        for (int i = 0; i < count; i++) {
+            int index = items.length - i - 1;
+            result[i] = items[index];
+        }
+        return result;
+    }
 
-    return items;
-  }
+    public AfishaItem[] getAll() {
+        return repository.findAll();
+    }
 
-  public void add(AfishaItem item) {
-    int length = items.length + 1;
-    AfishaItem[] tmp = new AfishaItem[length];
-    System.arraycopy(items, 0, tmp, 0, items.length);
-    int lastIndex = tmp.length - 1;
-    tmp[lastIndex] = item;
-    items = tmp;
-  }
+    public void add(AfishaItem item) {
+        repository.save(item);
+    }
 }
